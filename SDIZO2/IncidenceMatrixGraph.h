@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 typedef unsigned int uint;
 
 class IncidenceMatrixGraph
@@ -13,11 +14,14 @@ class IncidenceMatrixGraph
 public:
 	IncidenceMatrixGraph();
 	IncidenceMatrixGraph(float density, uint vertices, bool directed);
+	IncidenceMatrixGraph(std::string file, bool directed);
 	~IncidenceMatrixGraph();
+	void AddEdge(uint source, uint dest, uint weight);
+	void Print();
 
 private:
 	State** matrix;
-	uint vertices, edges;
+	uint vertices, edges, existing_edges;
 	bool directed;
 	int* weights;
 };

@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 
 
 IncidenceMatrixGraph::IncidenceMatrixGraph()
@@ -12,6 +13,7 @@ IncidenceMatrixGraph::IncidenceMatrixGraph()
 	directed = false;
 	weights = new int[15];
 
+	//tworzenie matrixa
 	matrix = new State*[vertices];
 
 	for (int i = 0; i < vertices; ++i)
@@ -30,7 +32,13 @@ IncidenceMatrixGraph::IncidenceMatrixGraph(float density, uint vertices, bool di
 	edges = floor(density * vertices * (vertices - 1) / 2);
 	weights = new int[edges];
 
+	//tworzenie matrixa
 	matrix = new State*[this->vertices];
+
+	for (int i = 0; i < vertices; ++i)
+	{
+		matrix[i] = new State[edges];
+	}
 
 	for (int i = 0; i < this->vertices; i++)
 		for (int j = 0; j < edges; j++) matrix[i][j] = NONE;
@@ -38,10 +46,36 @@ IncidenceMatrixGraph::IncidenceMatrixGraph(float density, uint vertices, bool di
 	//TODO: generowanie spojnego grafu
 }
 
-IncidenceMatrixGraph::IncidenceMatrixGraph(std::string file, bool directed)
+IncidenceMatrixGraph::IncidenceMatrixGraph(std::string filename, bool directed)
 {
 	this->directed = directed;
 
+	std::ifstream file;
+	file.open(filename);
+
+	file >> edges;
+	file >> vertices;
+
+	uint source, dest, weight;
+	weights = new int[edges];
+	matrix = new State*[vertices];
+	
+	//tworzenie matrixa
+
+	for (int i = 0; i < vertices; ++i)
+	{
+		matrix[i] = new State[edges];
+	}
+
+	for (int i = 0; i < this->vertices; i++)
+		for (int j = 0; j < edges; j++) matrix[i][j] = NONE;
+
+	while(file >> source >> dest >> weight)
+	{
+		AddEdge(source, dest, weight);
+	}
+
+	file.close();
 }
 
 

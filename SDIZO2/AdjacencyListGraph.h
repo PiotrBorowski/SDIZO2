@@ -14,6 +14,7 @@ class AdjacencyListGraph
 public:
 	AdjacencyListGraph();
 	AdjacencyListGraph(std::string filename, bool directed);
+	AdjacencyListGraph(float density, uint vertices, bool directed);
 	~AdjacencyListGraph();
 	void AddEdge(uint source, uint dest, uint weight);
 	void Print();

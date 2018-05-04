@@ -16,32 +16,38 @@ IncidenceMatrixGraph::IncidenceMatrixGraph()
 	//tworzenie matrixa
 	matrix = new State*[vertices];
 
-	for (int i = 0; i < vertices; ++i)
+	for (uint i = 0; i < vertices; ++i)
 	{
 		matrix[i] = new State[edges];
 	}
 
-	for (int i = 0; i < vertices; i++)
-		for (int j = 0; j < edges; j++) matrix[i][j] = NONE;
+	for (uint i = 0; i < vertices; i++)
+		for (uint j = 0; j < edges; j++) matrix[i][j] = NONE;
 }
 
 //random
 IncidenceMatrixGraph::IncidenceMatrixGraph(float density, uint vertices, bool directed)
 {
 	this->vertices = vertices;
-	edges = floor(density * vertices * (vertices - 1) / 2);
+
+	if(directed)
+		edges = floor(density * vertices * (vertices - 1));
+	else
+		edges = floor(density * vertices * (vertices - 1) / 2);
+
+
 	weights = new int[edges];
 
 	//tworzenie matrixa
 	matrix = new State*[this->vertices];
 
-	for (int i = 0; i < vertices; ++i)
+	for (uint i = 0; i < vertices; ++i)
 	{
 		matrix[i] = new State[edges];
 	}
 
-	for (int i = 0; i < this->vertices; i++)
-		for (int j = 0; j < edges; j++) matrix[i][j] = NONE;
+	for (uint i = 0; i < this->vertices; i++)
+		for (uint j = 0; j < edges; j++) matrix[i][j] = NONE;
 
 	//TODO: generowanie spojnego grafu
 }
@@ -62,13 +68,13 @@ IncidenceMatrixGraph::IncidenceMatrixGraph(std::string filename, bool directed)
 	
 	//tworzenie matrixa
 
-	for (int i = 0; i < vertices; ++i)
+	for (uint i = 0; i < vertices; ++i)
 	{
 		matrix[i] = new State[edges];
 	}
 
-	for (int i = 0; i < this->vertices; i++)
-		for (int j = 0; j < edges; j++) matrix[i][j] = NONE;
+	for (uint i = 0; i < this->vertices; i++)
+		for (uint j = 0; j < edges; j++) matrix[i][j] = NONE;
 
 	while(file >> source >> dest >> weight)
 	{

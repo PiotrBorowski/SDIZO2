@@ -32,6 +32,20 @@ AdjacencyListGraph::AdjacencyListGraph(std::string filename, bool directed)
 	}
 }
 
+AdjacencyListGraph::AdjacencyListGraph(float density, uint vertices, bool directed)
+{
+	this->vertices = vertices;
+	TableOfLists = new std::list<Edge>[vertices];
+
+	if (directed)
+		edges = floor(density * vertices * (vertices - 1));
+	else
+		edges = floor(density * vertices * (vertices - 1) / 2);
+
+
+	//TODO: generowanie spojnego grafu
+}
+
 
 AdjacencyListGraph::~AdjacencyListGraph()
 {
@@ -51,7 +65,7 @@ void AdjacencyListGraph::Print()
 {
 	std::cout << std::endl;
 
-	for (int i = 0; i < vertices; ++i)
+	for (uint i = 0; i < vertices; ++i)
 	{
 		std::cout << i << ": ";
 		for (Edge element : TableOfLists[i])

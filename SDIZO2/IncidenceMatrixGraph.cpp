@@ -4,6 +4,8 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <list>
+#include <vector>
 
 
 IncidenceMatrixGraph::IncidenceMatrixGraph()
@@ -14,11 +16,11 @@ IncidenceMatrixGraph::IncidenceMatrixGraph()
 	weights = new int[15];
 
 	//tworzenie matrixa
-	matrix = new State*[vertices];
+	matrix = new State*[vertices]; //wierzcholki
 
 	for (uint i = 0; i < vertices; ++i)
 	{
-		matrix[i] = new State[edges];
+		matrix[i] = new State[edges]; //krawedzie
 	}
 
 	for (uint i = 0; i < vertices; i++)
@@ -29,12 +31,15 @@ IncidenceMatrixGraph::IncidenceMatrixGraph()
 IncidenceMatrixGraph::IncidenceMatrixGraph(float density, uint vertices, bool directed)
 {
 	this->vertices = vertices;
+	this->directed = directed;
 
 	if(directed)
 		edges = floor(density * vertices * (vertices - 1));
 	else
+	{
 		edges = floor(density * vertices * (vertices - 1) / 2);
-
+		if (edges < vertices - 1) edges = vertices - 1; // dla spojnosci grafu
+	}
 
 	weights = new int[edges];
 
@@ -49,7 +54,7 @@ IncidenceMatrixGraph::IncidenceMatrixGraph(float density, uint vertices, bool di
 	for (uint i = 0; i < this->vertices; i++)
 		for (uint j = 0; j < edges; j++) matrix[i][j] = NONE;
 
-	//TODO: generowanie spojnego grafu
+	GenerateRandomGraph();
 }
 
 IncidenceMatrixGraph::IncidenceMatrixGraph(std::string filename, bool directed)
@@ -62,7 +67,8 @@ IncidenceMatrixGraph::IncidenceMatrixGraph(std::string filename, bool directed)
 	file >> edges;
 	file >> vertices;
 
-	uint source, dest, weight;
+	uint source, dest;
+	int weight;
 	weights = new int[edges];
 	matrix = new State*[vertices];
 	
@@ -94,11 +100,11 @@ IncidenceMatrixGraph::~IncidenceMatrixGraph()
 	delete[] weights;
 }
 
-void IncidenceMatrixGraph::AddEdge(uint source, uint dest, uint weight)
+bool IncidenceMatrixGraph::AddEdge(uint source, uint dest, int weight)
 {
-	if (source < vertices && dest < vertices)
+	if (source < vertices && dest < vertices && source != dest)
 	{
-		//if (!IsConnected(origin, destination)) //sprawdzanie czy dana krawedz juz istenieje
+		if (!IsConnected(source, dest)) //sprawdzanie czy dana krawedz juz istenieje
 		{
 			if (directed)
 			{
@@ -113,8 +119,10 @@ void IncidenceMatrixGraph::AddEdge(uint source, uint dest, uint weight)
 
 			weights[existing_edges] = weight;
 			++existing_edges;
+			return true;
 		}
 	}
+	return false;
 }
 
 void IncidenceMatrixGraph::Print()
@@ -134,3 +142,83 @@ void IncidenceMatrixGraph::Print()
 		std::cout << std::endl;
 	}
 }
+
+void IncidenceMatrixGraph::GenerateRandomGraph()
+{
+	srand(time(NULL));
+
+	uint ver1 = 0, ver2 = 0;
+	int weight;
+
+	while (ver1 == ver2) 
+	{
+		ver1 = rand() % vertices;
+		ver2 = rand() % vertices;
+	}
+
+	weight = rand() % 50 - 25;
+
+	AddEdge(ver1, ver2, weight);
+
+	//tworzenie spojnego grafu
+	while(existing_edges != edges && existing_edges != vertices - 1)
+	{
+		do
+		{
+			ver1 = rand() % vertices;
+		} while (!IsConnected(ver1)); //losuje dopoki wylosuje wierzcholek polaczony
+		
+		do
+		{
+			ver2 = rand() % vertices;
+		} while (IsConnected(ver2)); //losuje dopoki wylosuje wierzcholek niepolaczony
+
+		weight = rand() % 50;
+		AddEdge(ver1, ver2, weight);
+	}
+
+	//jezeli sa jakies krawedzie do wykrzystania to tworzy nowe krawedzie 
+	do
+	{
+		bool result;
+		do {
+			ver1 = rand() % vertices;
+			ver2 = rand() % vertices;
+			weight = rand() % 50;
+			result = AddEdge(ver1, ver2, weight); // zeby krawedzie sie nie powtarzaly
+		} while (!result);
+
+	}while (existing_edges < edges);
+}
+
+bool IncidenceMatrixGraph::IsConnected(uint vertex)
+{
+	for (uint i = 0; i < edges; ++i)
+	{
+		if (matrix[vertex][i] != NONE)
+			return true;
+	}
+	return false;
+}
+
+bool IncidenceMatrixGraph::IsConnected(uint source, uint dest)
+{
+	for (uint i = 0; i < edges; ++i)
+	{
+		if(directed)
+		{
+			if (matrix[source][i] == START)
+				if (matrix[dest][i] == END)
+					return true;
+		}
+		else 
+		{
+			if (matrix[source][i] != NONE)
+				if (matrix[dest][i] != NONE)
+					return true;
+		}
+		
+	}
+	return false;
+}
+

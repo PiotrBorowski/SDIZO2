@@ -52,7 +52,7 @@ AdjacencyListGraph::~AdjacencyListGraph()
 	delete[] TableOfLists;
 }
 
-void AdjacencyListGraph::AddEdge(uint source, uint dest, uint weight)
+void AdjacencyListGraph::AddEdge(uint source, uint dest, int weight)
 {
 	Edge edge;
 	edge.weight = weight;

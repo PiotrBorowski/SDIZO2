@@ -6,6 +6,8 @@
 #include <fstream>
 #include <list>
 #include <vector>
+#include <queue>
+#include <functional>
 
 
 IncidenceMatrixGraph::IncidenceMatrixGraph()
@@ -162,6 +164,28 @@ int IncidenceMatrixGraph::GetWeight(uint source, uint dest)
 
 	}
 	return INT_MAX;
+}
+
+void IncidenceMatrixGraph::Dijkstra(uint source, uint dest)
+{
+	if (source < 0 || dest < 0 || source >= vertices || dest >= vertices)
+		return;
+
+	bool * QS = new bool[vertices];
+	int * d = new int[vertices];             // Tablica kosztów dojœcia
+	int * p = new int[vertices];             // Tablica poprzedników
+	std::priority_queue<int, std::vector<int>, std::greater<int>> heap; //kopiec minimalny
+
+	
+
+	for (int i = 0; i < vertices; ++i)
+	{
+		QS[i] = false;
+		d[i] = INT_MAX;
+		p[i] = -1;		
+	}
+
+	d[source] = 0;
 }
 
 void IncidenceMatrixGraph::GenerateRandomGraph()

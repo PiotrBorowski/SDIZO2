@@ -18,6 +18,7 @@ public:
 	~IncidenceMatrixGraph();
 	bool AddEdge(uint source, uint dest, int weight);
 	void Print();
+	int GetWeight(uint source, uint dest);
 
 private:
 	State** matrix;

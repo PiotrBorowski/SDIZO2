@@ -95,6 +95,16 @@ void AdjacencyListGraph::Print()
 	}
 }
 
+int AdjacencyListGraph::GetWeight(uint source, uint dest)
+{
+	for (Edge element : TableOfLists[source])
+	{
+		if (element.vertex == dest)
+			return element.weight;
+	}
+	return INT_MAX;
+}
+
 void AdjacencyListGraph::GenerateRandomGraph()
 {
 	srand(time(NULL));

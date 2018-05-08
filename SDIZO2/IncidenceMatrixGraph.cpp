@@ -143,6 +143,27 @@ void IncidenceMatrixGraph::Print()
 	}
 }
 
+int IncidenceMatrixGraph::GetWeight(uint source, uint dest)
+{
+	for (uint i = 0; i < edges; ++i)
+	{
+		if (directed)
+		{
+			if (matrix[source][i] == START)
+				if (matrix[dest][i] == END)
+					return weights[i];
+		}
+		else
+		{
+			if (matrix[source][i] != NONE)
+				if (matrix[dest][i] != NONE)
+					return weights[i];
+		}
+
+	}
+	return INT_MAX;
+}
+
 void IncidenceMatrixGraph::GenerateRandomGraph()
 {
 	srand(time(NULL));

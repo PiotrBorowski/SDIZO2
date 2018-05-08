@@ -16,12 +16,15 @@ public:
 	AdjacencyListGraph(std::string filename, bool directed);
 	AdjacencyListGraph(float density, uint vertices, bool directed);
 	~AdjacencyListGraph();
-	void AddEdge(uint source, uint dest, int weight);
+	bool AddEdge(uint source, uint dest, int weight);
 	void Print();
 private:
 	std::list<Edge> *TableOfLists;
-	uint vertices, edges;
+	uint vertices, edges, existing_edges;
 	bool directed;
-	int* weights;
+
+	void GenerateRandomGraph();
+	bool IsConnected(uint vertex);
+	bool IsConnected(uint source, uint dest);
 };
 

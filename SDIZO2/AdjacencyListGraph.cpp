@@ -3,6 +3,7 @@
 #include <ostream>
 #include <iostream>
 #include <fstream>
+#include <ctime>
 
 
 AdjacencyListGraph::AdjacencyListGraph()
@@ -35,6 +36,7 @@ AdjacencyListGraph::AdjacencyListGraph(std::string filename, bool directed)
 AdjacencyListGraph::AdjacencyListGraph(float density, uint vertices, bool directed)
 {
 	this->vertices = vertices;
+	this->directed = directed;
 	TableOfLists = new std::list<Edge>[vertices];
 
 	if (directed)
@@ -43,7 +45,7 @@ AdjacencyListGraph::AdjacencyListGraph(float density, uint vertices, bool direct
 		edges = floor(density * vertices * (vertices - 1) / 2);
 
 
-	//TODO: generowanie spojnego grafu
+	GenerateRandomGraph();
 }
 
 
@@ -52,13 +54,30 @@ AdjacencyListGraph::~AdjacencyListGraph()
 	delete[] TableOfLists;
 }
 
-void AdjacencyListGraph::AddEdge(uint source, uint dest, int weight)
+bool AdjacencyListGraph::AddEdge(uint source, uint dest, int weight)
 {
-	Edge edge;
-	edge.weight = weight;
-	edge.vertex = dest;
+	if (source < vertices && dest < vertices && source != dest)
+	{
+		if (!IsConnected(source, dest)) //sprawdzanie czy dana krawedz juz istenieje
+		{
+			Edge edge;
+			edge.weight = weight;
+			edge.vertex = dest;
 
-	TableOfLists[source].push_back(edge);
+			TableOfLists[source].push_back(edge); //dodajemy z source do dest
+			
+			if (!directed) //jezeli nieskierowany to trzeba dodac w druga strone
+			{
+				Edge double_edge;
+				double_edge.weight = weight;
+				double_edge.vertex = source;
+				TableOfLists[dest].push_back(double_edge);
+			}
+			++existing_edges;
+			return true;
+		}
+	}
+	return false;
 }
 
 void AdjacencyListGraph::Print()
@@ -74,6 +93,76 @@ void AdjacencyListGraph::Print()
 		}
 		std::cout << std::endl;
 	}
+}
+
+void AdjacencyListGraph::GenerateRandomGraph()
+{
+	srand(time(NULL));
+
+	uint ver1 = 0, ver2 = 0;
+	int weight;
+
+	while (ver1 == ver2)
+	{
+		ver1 = rand() % vertices;
+		ver2 = rand() % vertices;
+	}
+
+	weight = rand() % 50 - 25;
+
+	AddEdge(ver1, ver2, weight);
+
+	//tworzenie spojnego grafu
+	while (existing_edges != edges && existing_edges != vertices - 1)
+	{
+		do
+		{
+			ver1 = rand() % vertices;
+		} while (!IsConnected(ver1)); //losuje dopoki wylosuje wierzcholek polaczony
+
+		do
+		{
+			ver2 = rand() % vertices;
+		} while (IsConnected(ver2)); //losuje dopoki wylosuje wierzcholek niepolaczony
+
+		weight = rand() % 50 - 25;
+		AddEdge(ver1, ver2, weight);
+	}
+
+	//jezeli sa jakies krawedzie do wykrzystania to tworzy nowe krawedzie 
+	do
+	{
+		bool result;
+		do {
+			ver1 = rand() % vertices;
+			ver2 = rand() % vertices;
+			weight = rand() % 50 - 25;
+			result = AddEdge(ver1, ver2, weight); // zeby krawedzie sie nie powtarzaly
+		} while (!result);
+
+	} while (existing_edges < edges);
+}
+
+//czy wierzcholek posiada polaczenie z innym wierzcholkiem albo jest poczatkiem ub koncem w skierowanym, wykorzystywane do losowania
+bool AdjacencyListGraph::IsConnected(uint vertex)
+{
+	for (uint i = 0; i < vertices; ++i)
+	{
+		if (IsConnected(i, vertex))
+			return false; // jezeli zaden wierzcholek nie jest polaczony z tym wierzcholkiem
+	}
+
+	return (TableOfLists[vertex].size() == 0); //i czy wierzcholek nie ma krawedzi
+}
+
+bool AdjacencyListGraph::IsConnected(uint source, uint dest)
+{
+	for (Edge element : TableOfLists[source])
+	{
+		if (element.vertex == dest)
+			return true;
+	}
+	return false;
 }
 
 

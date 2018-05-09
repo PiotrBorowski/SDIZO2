@@ -9,6 +9,7 @@
 #include <queue>
 #include <functional>
 
+typedef std::pair<int, int> iPair;
 
 IncidenceMatrixGraph::IncidenceMatrixGraph()
 {
@@ -174,18 +175,45 @@ void IncidenceMatrixGraph::Dijkstra(uint source, uint dest)
 	bool * QS = new bool[vertices];
 	int * d = new int[vertices];             // Tablica kosztów dojœcia
 	int * p = new int[vertices];             // Tablica poprzedników
-	std::priority_queue<int, std::vector<int>, std::greater<int>> heap; //kopiec minimalny
 
 	
+
+	std::priority_queue< iPair, std::vector <iPair>, std::greater<iPair> > PQ; //kolejka priorytetowa
 
 	for (int i = 0; i < vertices; ++i)
 	{
 		QS[i] = false;
 		d[i] = INT_MAX;
 		p[i] = -1;		
+		if (i != source) PQ.push(std::make_pair(INT_MAX, i));
 	}
 
+
+	PQ.push(std::make_pair(0, source)); //wstawianie do kolejki
 	d[source] = 0;
+
+	while (!PQ.empty())
+	{
+		int u = PQ.top().second;
+		PQ.pop();
+		QS[u] = true;
+
+		for (int i = 0; i < vertices; ++i)
+		{
+			if(!QS[i] && IsConnected(u,i))
+			{
+				if (d[i] > d[u] + GetWeight(u, i))
+				{
+					d[i] = d[u] + GetWeight(u, i);
+					PQ.push(std::make_pair(d[i], i));
+					p[i] = u;
+				}
+			}
+		}
+	}
+
+	std::cout << "Droga wynosi: " << d[dest] << std::endl;
+	
 }
 
 void IncidenceMatrixGraph::GenerateRandomGraph()

@@ -134,6 +134,10 @@ void IncidenceMatrixGraph::Print()
 	std::cout << "  ";
 	for (uint i = 0; i < edges; i++)
 		std::cout << std::setw(3) << i << " ";
+	std::cout << std::endl;
+	std::cout << "  ";
+	for (uint i = 0; i < edges; i++)
+		std::cout << std::setw(3) << weights[i] << " ";
 
 	std::cout << std::endl;
 
@@ -229,7 +233,7 @@ void IncidenceMatrixGraph::GenerateRandomGraph()
 		ver2 = rand() % vertices;
 	}
 
-	weight = rand() % 50 - 25;
+	weight = rand() % 50;
 
 	AddEdge(ver1, ver2, weight);
 
@@ -246,7 +250,7 @@ void IncidenceMatrixGraph::GenerateRandomGraph()
 			ver2 = rand() % vertices;
 		} while (IsConnected(ver2)); //losuje dopoki wylosuje wierzcholek niepolaczony
 
-		weight = rand() % 50 - 25;
+		weight = rand() % 50;
 		AddEdge(ver1, ver2, weight);
 	}
 
@@ -257,7 +261,7 @@ void IncidenceMatrixGraph::GenerateRandomGraph()
 		do {
 			ver1 = rand() % vertices;
 			ver2 = rand() % vertices;
-			weight = rand() % 50 - 25;
+			weight = rand() % 50;
 			result = AddEdge(ver1, ver2, weight); // zeby krawedzie sie nie powtarzaly
 		} while (!result);
 

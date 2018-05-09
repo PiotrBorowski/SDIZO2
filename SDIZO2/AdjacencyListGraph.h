@@ -19,6 +19,7 @@ public:
 	bool AddEdge(uint source, uint dest, int weight);
 	void Print();
 	int GetWeight(uint source, uint dest);
+	void Dijkstra(uint source, uint dest);
 
 private:
 	std::list<Edge> *TableOfLists;

@@ -4,7 +4,10 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <queue>
+#include <functional>
 
+typedef std::pair<int, int> iPair;
 
 AdjacencyListGraph::AdjacencyListGraph()
 {
@@ -86,10 +89,10 @@ void AdjacencyListGraph::Print()
 
 	for (uint i = 0; i < vertices; ++i)
 	{
-		std::cout << i << ": ";
+		std::cout << i << "-> ";
 		for (Edge element : TableOfLists[i])
 		{
-			std::cout << element.vertex << " ";
+			std::cout << element.vertex << ":" << element.weight << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -105,6 +108,55 @@ int AdjacencyListGraph::GetWeight(uint source, uint dest)
 	return INT_MAX;
 }
 
+void AdjacencyListGraph::Dijkstra(uint source, uint dest)
+{
+	if (source < 0 || dest < 0 || source >= vertices || dest >= vertices)
+		return;
+
+	bool * QS = new bool[vertices];
+	int * d = new int[vertices];             // Tablica kosztów dojœcia
+	int * p = new int[vertices];             // Tablica poprzedników
+
+
+
+	std::priority_queue< iPair, std::vector <iPair>, std::greater<iPair> > PQ; //kolejka priorytetowa
+
+	for (int i = 0; i < vertices; ++i)
+	{
+		QS[i] = false;
+		d[i] = INT_MAX;
+		p[i] = -1;
+		if (i != source) PQ.push(std::make_pair(INT_MAX, i));
+	}
+
+
+	PQ.push(std::make_pair(0, source)); //wstawianie do kolejki
+	d[source] = 0;
+
+	while (!PQ.empty())
+	{
+		int u = PQ.top().second; 
+		PQ.pop();
+		QS[u] = true;
+
+		for (auto i : TableOfLists[u])
+		{
+			if (!QS[i.vertex])
+			{
+				if (d[i.vertex] > d[u] + i.weight)
+				{
+					d[i.vertex] = d[u] + i.weight;
+					PQ.push(std::make_pair(d[i.vertex], i.vertex));
+					p[i.vertex] = u;
+				}
+			}
+		}
+	}
+
+	std::cout << "Droga wynosi: " << d[dest] << std::endl;
+}
+
+//TODO: DIRECTED - FALSE BUG
 void AdjacencyListGraph::GenerateRandomGraph()
 {
 	srand(time(NULL));
@@ -118,7 +170,7 @@ void AdjacencyListGraph::GenerateRandomGraph()
 		ver2 = rand() % vertices;
 	}
 
-	weight = rand() % 50 - 25;
+	weight = rand() % 50;
 
 	AddEdge(ver1, ver2, weight);
 
@@ -135,7 +187,7 @@ void AdjacencyListGraph::GenerateRandomGraph()
 			ver2 = rand() % vertices;
 		} while (IsConnected(ver2)); //losuje dopoki wylosuje wierzcholek niepolaczony
 
-		weight = rand() % 50 - 25;
+		weight = rand() % 50;
 		AddEdge(ver1, ver2, weight);
 	}
 
@@ -146,7 +198,7 @@ void AdjacencyListGraph::GenerateRandomGraph()
 		do {
 			ver1 = rand() % vertices;
 			ver2 = rand() % vertices;
-			weight = rand() % 50 - 25;
+			weight = rand() % 50;
 			result = AddEdge(ver1, ver2, weight); // zeby krawedzie sie nie powtarzaly
 		} while (!result);
 

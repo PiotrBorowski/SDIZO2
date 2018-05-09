@@ -6,6 +6,7 @@
 #include <ctime>
 #include <queue>
 #include <functional>
+#include <stack>
 
 typedef std::pair<int, int> iPair;
 
@@ -156,6 +157,17 @@ void AdjacencyListGraph::Dijkstra(uint source, uint dest)
 	}
 
 	std::cout << "Droga wynosi: " << d[dest] << std::endl;
+
+	std::stack<int> stack;
+
+	for (int j = dest; j > -1; j = p[j]) stack.push(j);
+
+	std::cout << "Droga: "<< std::endl;
+	while (!stack.empty())
+	{
+		std::cout << stack.top() << "->";
+		stack.pop();
+	}
 }
 
 //TODO: DIRECTED - FALSE BUG

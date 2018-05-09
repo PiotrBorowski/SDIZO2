@@ -44,9 +44,11 @@ AdjacencyListGraph::AdjacencyListGraph(float density, uint vertices, bool direct
 
 	if (directed)
 		edges = floor(density * vertices * (vertices - 1));
-	else
+	else 
+	{
 		edges = floor(density * vertices * (vertices - 1) / 2);
-
+		if (edges < vertices - 1) edges = vertices - 1;
+	}
 
 	GenerateRandomGraph();
 }

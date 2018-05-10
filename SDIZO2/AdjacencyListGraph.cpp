@@ -168,9 +168,12 @@ void AdjacencyListGraph::Dijkstra(uint source, uint dest)
 		std::cout << stack.top() << "->";
 		stack.pop();
 	}
+
+	delete[] QS;
+	delete[] p;
+	delete[] d;
 }
 
-//TODO: DIRECTED - FALSE BUG
 void AdjacencyListGraph::GenerateRandomGraph()
 {
 	srand(time(NULL));
@@ -184,7 +187,7 @@ void AdjacencyListGraph::GenerateRandomGraph()
 		ver2 = rand() % vertices;
 	}
 
-	weight = rand() % 50;
+	weight = rand() % 50 + 1;
 
 	AddEdge(ver1, ver2, weight);
 
@@ -201,7 +204,7 @@ void AdjacencyListGraph::GenerateRandomGraph()
 			ver2 = rand() % vertices;
 		} while (IsConnected(ver2)); //losuje dopoki wylosuje wierzcholek niepolaczony
 
-		weight = rand() % 50;
+		weight = rand() % 50 + 1;
 		AddEdge(ver1, ver2, weight);
 	}
 
@@ -212,7 +215,7 @@ void AdjacencyListGraph::GenerateRandomGraph()
 		do {
 			ver1 = rand() % vertices;
 			ver2 = rand() % vertices;
-			weight = rand() % 50;
+			weight = rand() % 50 + 1;
 			result = AddEdge(ver1, ver2, weight); // zeby krawedzie sie nie powtarzaly
 		} while (!result);
 

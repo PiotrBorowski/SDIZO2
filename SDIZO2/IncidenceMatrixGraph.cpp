@@ -230,7 +230,9 @@ void IncidenceMatrixGraph::Dijkstra(uint source, uint dest)
 		stack.pop();
 	}
 
-	
+	delete[] QS;
+	delete[] p;
+	delete[] d;
 }
 
 void IncidenceMatrixGraph::GenerateRandomGraph()
@@ -246,7 +248,7 @@ void IncidenceMatrixGraph::GenerateRandomGraph()
 		ver2 = rand() % vertices;
 	}
 
-	weight = rand() % 50;
+	weight = rand() % 50 + 1;
 
 	AddEdge(ver1, ver2, weight);
 
@@ -263,7 +265,7 @@ void IncidenceMatrixGraph::GenerateRandomGraph()
 			ver2 = rand() % vertices;
 		} while (IsConnected(ver2)); //losuje dopoki wylosuje wierzcholek niepolaczony
 
-		weight = rand() % 50;
+		weight = rand() % 50 + 1;
 		AddEdge(ver1, ver2, weight);
 	}
 
@@ -274,7 +276,7 @@ void IncidenceMatrixGraph::GenerateRandomGraph()
 		do {
 			ver1 = rand() % vertices;
 			ver2 = rand() % vertices;
-			weight = rand() % 50;
+			weight = rand() % 50 + 1;
 			result = AddEdge(ver1, ver2, weight); // zeby krawedzie sie nie powtarzaly
 		} while (!result);
 

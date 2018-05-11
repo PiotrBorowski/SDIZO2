@@ -236,6 +236,7 @@ bool AdjacencyListGraph::IsConnected(uint vertex)
 
 bool AdjacencyListGraph::IsConnected(uint source, uint dest)
 {
+	if (source == dest) return false;
 	for (Edge element : TableOfLists[source])
 	{
 		if (element.vertex == dest)

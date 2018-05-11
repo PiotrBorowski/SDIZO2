@@ -10,7 +10,8 @@
 #include <functional>
 #include <stack>
 
-typedef std::pair<int, int> iPair;
+typedef std::pair<int, int> iPair; //waga, docelowy
+typedef std::pair<int, std::pair<uint, uint>> pPair; //waga, zrodlowy , docelowy
 
 IncidenceMatrixGraph::IncidenceMatrixGraph()
 {
@@ -30,6 +31,28 @@ IncidenceMatrixGraph::IncidenceMatrixGraph()
 	for (uint i = 0; i < vertices; i++)
 		for (uint j = 0; j < edges; j++) matrix[i][j] = NONE;
 }
+
+IncidenceMatrixGraph::IncidenceMatrixGraph(uint vertices, bool directed)
+{
+	this->vertices = vertices;
+	this->directed = directed;
+	if (directed)
+		weights = new int[vertices * (vertices - 1)];
+	else
+		weights = new int[vertices * (vertices - 1) / 2];
+
+	//tworzenie matrixa
+	matrix = new State*[vertices]; //wierzcholki
+
+	for (uint i = 0; i < vertices; ++i)
+	{
+		matrix[i] = new State[vertices * (vertices - 1)]; //krawedzie
+	}
+
+	for (uint i = 0; i < vertices; i++)
+		for (uint j = 0; j < vertices * (vertices - 1); j++) matrix[i][j] = NONE;
+}
+
 
 //random
 IncidenceMatrixGraph::IncidenceMatrixGraph(float density, uint vertices, bool directed)
@@ -133,11 +156,11 @@ void IncidenceMatrixGraph::Print()
 {
 	std::cout << std::endl;
 	std::cout << "  ";
-	for (uint i = 0; i < edges; i++)
+	for (uint i = 0; i < existing_edges; i++)
 		std::cout << std::setw(3) << i << " ";
 	std::cout << std::endl;
 	std::cout << "  ";
-	for (uint i = 0; i < edges; i++)
+	for (uint i = 0; i < existing_edges; i++)
 		std::cout << std::setw(3) << weights[i] << " ";
 
 	std::cout << std::endl;
@@ -145,7 +168,7 @@ void IncidenceMatrixGraph::Print()
 	for (uint row = 0; row < vertices; row++)
 	{
 		std::cout << row << " ";
-		for (uint column = 0; column < edges; column++)
+		for (uint column = 0; column < existing_edges; column++)
 			std::cout << std::setw(3) << matrix[row][column] << " ";
 		std::cout << std::endl;
 	}
@@ -235,6 +258,47 @@ void IncidenceMatrixGraph::Dijkstra(uint source, uint dest)
 	delete[] d;
 }
 
+IncidenceMatrixGraph* IncidenceMatrixGraph::Prima()
+{
+	std::priority_queue< pPair, std::vector <pPair>, std::greater<pPair> > PQ; //kolejka priorytetowa
+	bool * visited = new bool[vertices];
+	IncidenceMatrixGraph * result = new IncidenceMatrixGraph(vertices, false);
+	for (int i = 0; i < vertices; ++i)
+	{
+		visited[i] = false;
+	}
+
+	uint vertex = 0;
+	visited[vertex] = true;
+
+	for (int i = 1; i < vertices; ++i)          // Do drzewa dodamy n - 1 krawêdzi grafu
+	{
+		for (int i = 0; i < vertices; ++i)
+		{
+			if (IsConnected(vertex, i) && !visited[i])
+			{
+				PQ.push(std::make_pair(GetWeight(vertex, i), std::make_pair(vertex, i))); // dodajemy do kolejki krawedz
+			}
+		}
+
+		pPair edge;
+		do
+		{
+			edge = PQ.top();
+			PQ.pop();
+		} while (visited[edge.second.second]);
+
+		result->AddEdge(edge.second.first, edge.second.second, edge.first);
+		visited[edge.second.second] = true;
+		vertex = edge.second.second; //teraz zrodlowym wierzcholkiem jest docelowy
+	}
+
+	
+	delete[] visited;
+
+	return result;
+}
+
 void IncidenceMatrixGraph::GenerateRandomGraph()
 {
 	srand(time(NULL));
@@ -285,7 +349,7 @@ void IncidenceMatrixGraph::GenerateRandomGraph()
 //czy wierzcholek posiada polaczenie z innym wierzcholkiem albo jest poczatkiem lub koncem w skierowanym, wykorzystywane do losowania
 bool IncidenceMatrixGraph::IsConnected(uint vertex)
 {
-	for (uint i = 0; i < edges; ++i)
+	for (uint i = 0; i < existing_edges; ++i)
 	{
 		if (matrix[vertex][i] != NONE)
 			return true;
@@ -295,7 +359,8 @@ bool IncidenceMatrixGraph::IsConnected(uint vertex)
 
 bool IncidenceMatrixGraph::IsConnected(uint source, uint dest)
 {
-	for (uint i = 0; i < edges; ++i)
+	if (source == dest) return false;
+	for (uint i = 0; i < existing_edges; ++i)
 	{
 		if(directed)
 		{

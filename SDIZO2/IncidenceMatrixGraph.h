@@ -13,6 +13,7 @@ class IncidenceMatrixGraph
 
 public:
 	IncidenceMatrixGraph();
+	IncidenceMatrixGraph(uint vertices, bool directed);
 	IncidenceMatrixGraph(float density, uint vertices, bool directed);
 	IncidenceMatrixGraph(std::string file, bool directed);
 	~IncidenceMatrixGraph();
@@ -20,10 +21,11 @@ public:
 	void Print();
 	int GetWeight(uint source, uint dest);
 	void Dijkstra(uint source, uint dest);
+	IncidenceMatrixGraph* Prima();
 
 private:
 	State** matrix;
-	uint vertices, edges, existing_edges;
+	uint vertices, edges, existing_edges; //edges dla spojnosci grafu przy generowaniu losowym
 	bool directed;
 	int* weights;
 

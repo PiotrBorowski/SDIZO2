@@ -13,6 +13,7 @@ class AdjacencyListGraph
 {
 public:
 	AdjacencyListGraph();
+	AdjacencyListGraph(uint vertices, bool directed);
 	AdjacencyListGraph(std::string filename, bool directed);
 	AdjacencyListGraph(float density, uint vertices, bool directed);
 	~AdjacencyListGraph();
@@ -20,7 +21,7 @@ public:
 	void Print();
 	int GetWeight(uint source, uint dest);
 	void Dijkstra(uint source, uint dest);
-
+	AdjacencyListGraph* Prima();
 private:
 	std::list<Edge> *TableOfLists;
 	uint vertices, edges, existing_edges;

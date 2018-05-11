@@ -9,12 +9,21 @@
 #include <stack>
 
 typedef std::pair<int, int> iPair;
+typedef std::pair<int, std::pair<uint, uint>> pPair; //waga, zrodlowy , docelowy
+
 
 AdjacencyListGraph::AdjacencyListGraph()
 {
 	vertices = 15;
 	edges = 15;
 	directed = false;
+	TableOfLists = new std::list<Edge>[vertices];
+}
+
+AdjacencyListGraph::AdjacencyListGraph(uint vertices, bool directed)
+{
+	this->vertices = vertices;
+	this->directed = directed;
 	TableOfLists = new std::list<Edge>[vertices];
 }
 
@@ -172,6 +181,47 @@ void AdjacencyListGraph::Dijkstra(uint source, uint dest)
 	delete[] QS;
 	delete[] p;
 	delete[] d;
+}
+
+AdjacencyListGraph* AdjacencyListGraph::Prima()
+{
+	std::priority_queue< pPair, std::vector <pPair>, std::greater<pPair> > PQ; //kolejka priorytetowa
+	bool * visited = new bool[vertices];
+	AdjacencyListGraph * result = new AdjacencyListGraph(vertices, false);
+	for (int i = 0; i < vertices; ++i)
+	{
+		visited[i] = false;
+	}
+
+	uint vertex = 0;
+	visited[vertex] = true;
+
+	for (int i = 1; i < vertices; ++i)          // Do drzewa dodamy n - 1 krawêdzi grafu
+	{
+		for (auto i : TableOfLists[vertex])
+		{
+			if (!visited[i.vertex])
+			{
+				PQ.push(std::make_pair(GetWeight(vertex, i.vertex), std::make_pair(vertex, i.vertex))); // dodajemy do kolejki krawedz
+			}
+		}
+
+		pPair edge;
+		do
+		{
+			edge = PQ.top();
+			PQ.pop();
+		} while (visited[edge.second.second]);
+
+		result->AddEdge(edge.second.first, edge.second.second, edge.first);
+		visited[edge.second.second] = true;
+		vertex = edge.second.second; //teraz zrodlowym wierzcholkiem jest docelowy
+	}
+
+
+	delete[] visited;
+
+	return result;
 }
 
 void AdjacencyListGraph::GenerateRandomGraph()

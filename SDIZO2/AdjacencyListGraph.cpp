@@ -120,10 +120,10 @@ int AdjacencyListGraph::GetWeight(uint source, uint dest)
 	return INT_MAX;
 }
 
-void AdjacencyListGraph::Dijkstra(uint source, uint dest)
+std::pair<int*, int*> AdjacencyListGraph::Dijkstra(uint source, uint dest)
 {
 	if (source < 0 || dest < 0 || source >= vertices || dest >= vertices)
-		return;
+		return std::make_pair(nullptr, nullptr);
 
 	bool * QS = new bool[vertices];
 	int * d = new int[vertices];             // Tablica kosztów dojœcia
@@ -165,22 +165,56 @@ void AdjacencyListGraph::Dijkstra(uint source, uint dest)
 		}
 	}
 
-	std::cout << "Droga wynosi: " << d[dest] << std::endl;
-
-	std::stack<int> stack;
-
-	for (int j = dest; j > -1; j = p[j]) stack.push(j);
-
-	std::cout << "Droga: "<< std::endl;
-	while (!stack.empty())
-	{
-		std::cout << stack.top() << "->";
-		stack.pop();
-	}
 
 	delete[] QS;
-	delete[] p;
-	delete[] d;
+
+	return std::make_pair(d, p);
+}
+
+std::pair<int*, int*> AdjacencyListGraph::BellmanFord(uint source, uint dest)
+{
+	if (source < 0 || dest < 0 || source >= vertices || dest >= vertices)
+		return std::make_pair(nullptr, nullptr);
+
+	int * d = new int[vertices];             // Tablica kosztów dojœcia
+	int * p = new int[vertices];             // Tablica poprzedników
+
+	for (int i = 0; i < vertices; ++i)
+	{
+		d[i] = 999999;
+		p[i] = -1;
+	}
+
+	d[source] = 0;
+
+	for (int k = 1; k < vertices; ++k)
+	{
+		for (int u = 0; u < vertices; ++u)
+		{
+			for (auto i : TableOfLists[u])
+			{
+				if (d[i.vertex] > d[u] + i.weight)
+				{
+					d[i.vertex] = d[u] + i.weight;
+					p[i.vertex] = u; //poprzednik
+				}
+			}
+		}
+	}
+
+	//sprawdzanie czy nie zawiera ujemnego cyklu
+	for (int u = 0; u < vertices; ++u)
+	{
+		for (auto i : TableOfLists[u])
+		{
+			if (d[i.vertex] > d[u] + i.weight)
+			{
+				std::make_pair(nullptr, nullptr);
+			}
+		}
+	}
+
+	return std::make_pair(d, p);
 }
 
 AdjacencyListGraph* AdjacencyListGraph::Prima()

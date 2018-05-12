@@ -247,6 +247,9 @@ std::pair<int*, int*> IncidenceMatrixGraph::Dijkstra(uint source, uint dest)
 
 std::pair<int*, int*> IncidenceMatrixGraph::BellmanFord(uint source, uint dest)
 {
+	if (source < 0 || dest < 0 || source >= vertices || dest >= vertices)
+		return std::make_pair(nullptr, nullptr);
+
 	int * d = new int[vertices];             // Tablica kosztów dojœcia
 	int * p = new int[vertices];             // Tablica poprzedników
 

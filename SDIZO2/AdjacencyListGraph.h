@@ -20,7 +20,8 @@ public:
 	bool AddEdge(uint source, uint dest, int weight);
 	void Print();
 	int GetWeight(uint source, uint dest);
-	void Dijkstra(uint source, uint dest);
+	std::pair<int*, int*> Dijkstra(uint source, uint dest);
+	std::pair<int*, int*> BellmanFord(uint source, uint dest);
 	AdjacencyListGraph* Prima();
 private:
 	std::list<Edge> *TableOfLists;

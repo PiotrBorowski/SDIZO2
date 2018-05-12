@@ -195,10 +195,10 @@ int IncidenceMatrixGraph::GetWeight(uint source, uint dest)
 	return INT_MAX;
 }
 
-void IncidenceMatrixGraph::Dijkstra(uint source, uint dest)
+std::pair<int*, int*> IncidenceMatrixGraph::Dijkstra(uint source, uint dest)
 {
 	if (source < 0 || dest < 0 || source >= vertices || dest >= vertices)
-		return;
+		return std::make_pair(nullptr, nullptr);
 
 	bool * QS = new bool[vertices];
 	int * d = new int[vertices];             // Tablica kosztów dojœcia
@@ -211,7 +211,7 @@ void IncidenceMatrixGraph::Dijkstra(uint source, uint dest)
 	for (int i = 0; i < vertices; ++i)
 	{
 		QS[i] = false;
-		d[i] = INT_MAX;
+		d[i] = 999999;
 		p[i] = -1;		
 		if (i != source) PQ.push(std::make_pair(INT_MAX, i));
 	}
@@ -240,22 +240,59 @@ void IncidenceMatrixGraph::Dijkstra(uint source, uint dest)
 		}
 	}
 
-	std::cout << "Droga wynosi: " << d[dest] << std::endl;
+	delete[] QS;
 
-	std::stack<int> stack;
+	return std::make_pair(d, p);
+}
 
-	for (int j = dest; j > -1; j = p[j]) stack.push(j);
+std::pair<int*, int*> IncidenceMatrixGraph::BellmanFord(uint source, uint dest)
+{
+	int * d = new int[vertices];             // Tablica kosztów dojœcia
+	int * p = new int[vertices];             // Tablica poprzedników
 
-	std::cout << "Droga: "<< std::endl;
-	while(!stack.empty())
+	for (int i = 0; i < vertices; ++i)
 	{
-		std::cout << stack.top() << "->";
-		stack.pop();
+		d[i] = 999999;
+		p[i] = -1;
 	}
 
-	delete[] QS;
-	delete[] p;
-	delete[] d;
+	d[source] = 0;
+
+	for (int k = 1; k < vertices; ++k)
+	{
+		
+		for (int i = 0; i < vertices; ++i) // zrodlowe
+		{
+			for (int j = 0; j < vertices; ++j) //docelowe
+			{
+				if(IsConnected(i,j))
+				{
+					if(d[j] > d[i] + GetWeight(i,j))
+					{
+						d[j] = d[i] + GetWeight(i, j);
+						p[j] = i; //poprzednik
+					}
+				}
+			}
+		}
+	}
+	
+	//sprawdzanie czy nie zawiera ujemnego cyklu
+	for (int i = 0; i < vertices; ++i) // zrodlowe
+	{
+		for (int j = 0; j < vertices; ++j) //docelowe
+		{
+			if (IsConnected(i, j))
+			{
+				if (d[j] > d[i] + GetWeight(i, j))
+				{
+					return std::make_pair(nullptr, nullptr);
+				}
+			}
+		}
+	}
+
+	return std::make_pair(d, p);
 }
 
 IncidenceMatrixGraph* IncidenceMatrixGraph::Prima()

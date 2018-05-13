@@ -9,6 +9,7 @@
 #include <queue>
 #include <functional>
 #include <stack>
+#include "DisjointSet.h"
 
 typedef std::pair<int, int> iPair; //waga, docelowy
 typedef std::pair<int, std::pair<uint, uint>> pPair; //waga, zrodlowy , docelowy
@@ -336,6 +337,43 @@ IncidenceMatrixGraph* IncidenceMatrixGraph::Prima()
 	
 	delete[] visited;
 
+	return result;
+}
+
+IncidenceMatrixGraph* IncidenceMatrixGraph::Kruskal()
+{
+	DisjointSet * DSet = new DisjointSet(vertices);
+	std::priority_queue< pPair, std::vector <pPair>, std::greater<pPair> > PQ; //kolejka priorytetowa
+	IncidenceMatrixGraph * result = new IncidenceMatrixGraph(vertices, false);
+
+	for (int i = 0; i < vertices; ++i)
+	{
+		DSet->Make_set(i);
+	}
+
+	//uzupelnianie kolejki priorytetowej
+	for (int i = 0; i < vertices; ++i)
+	{
+		for (int j = 0; j < vertices; ++j)
+		{
+			if(IsConnected(i,j))
+			{
+				PQ.push(std::make_pair(GetWeight(i, j), std::make_pair(i, j)));
+			}
+		}
+	}
+
+	pPair edge;
+	for (int i = 1; i < vertices; ++i)
+	{
+		do
+		{
+			edge = PQ.top();
+			PQ.pop();
+		} while (DSet->Find_set(edge.second.first) == DSet->Find_set(edge.second.second));
+		result->AddEdge(edge.second.first, edge.second.second, edge.first);
+		DSet->Union_sets(edge.second.first, edge.second.second); // laczenie zbiorow
+	}
 	return result;
 }
 

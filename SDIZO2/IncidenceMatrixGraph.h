@@ -23,6 +23,7 @@ public:
 	std::pair<int*,int*>  Dijkstra(uint source, uint dest);
 	std::pair<int*, int*>  BellmanFord(uint source, uint dest);
 	IncidenceMatrixGraph* Prima();
+	IncidenceMatrixGraph* Kruskal();
 
 private:
 	State** matrix;

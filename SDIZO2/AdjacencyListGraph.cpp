@@ -7,6 +7,7 @@
 #include <queue>
 #include <functional>
 #include <stack>
+#include "DisjointSet.h"
 
 typedef std::pair<int, int> iPair;
 typedef std::pair<int, std::pair<uint, uint>> pPair; //waga, zrodlowy , docelowy
@@ -230,7 +231,7 @@ AdjacencyListGraph* AdjacencyListGraph::Prima()
 	uint vertex = 0;
 	visited[vertex] = true;
 
-	for (int i = 1; i < vertices; ++i)          // Do drzewa dodamy n - 1 krawêdzi grafu
+	for (int j = 1; j < vertices; ++j)          // Do drzewa dodamy n - 1 krawêdzi grafu
 	{
 		for (auto i : TableOfLists[vertex])
 		{
@@ -255,6 +256,40 @@ AdjacencyListGraph* AdjacencyListGraph::Prima()
 
 	delete[] visited;
 
+	return result;
+}
+
+AdjacencyListGraph* AdjacencyListGraph::Kruskal()
+{
+	DisjointSet * DSet = new DisjointSet(vertices);
+	std::priority_queue< pPair, std::vector <pPair>, std::greater<pPair> > PQ; //kolejka priorytetowa
+	AdjacencyListGraph * result = new AdjacencyListGraph(vertices, false);
+
+	for (uint i = 0; i < vertices; ++i)
+	{
+		DSet->Make_set(i);
+	}
+
+	//uzupelnianie kolejki priorytetowej
+	for (int j = 0; j < vertices; ++j)          // Do drzewa dodamy n - 1 krawêdzi grafu
+	{
+		for (auto i : TableOfLists[j])
+		{
+				PQ.push(std::make_pair(i.weight, std::make_pair(j, i.vertex))); // dodajemy do kolejki krawedz
+		}
+	}
+
+	pPair edge;
+	for (uint i = 1; i < vertices; ++i)
+	{
+		do
+		{
+			edge = PQ.top();
+			PQ.pop();
+		} while (DSet->Find_set(edge.second.first) == DSet->Find_set(edge.second.second));
+		result->AddEdge(edge.second.first, edge.second.second, edge.first);
+		DSet->Union_sets(edge.second.first, edge.second.second); // laczenie zbiorow
+	}
 	return result;
 }
 

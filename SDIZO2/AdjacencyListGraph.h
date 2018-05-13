@@ -23,6 +23,7 @@ public:
 	std::pair<int*, int*> Dijkstra(uint source, uint dest);
 	std::pair<int*, int*> BellmanFord(uint source, uint dest);
 	AdjacencyListGraph* Prima();
+	AdjacencyListGraph* Kruskal();
 private:
 	std::list<Edge> *TableOfLists;
 	uint vertices, edges, existing_edges;

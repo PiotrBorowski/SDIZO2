@@ -45,6 +45,7 @@ AdjacencyListGraph::AdjacencyListGraph(std::string filename, bool directed)
 	{
 		AddEdge(source, dest, weight);
 	}
+	file.close();
 }
 
 AdjacencyListGraph::AdjacencyListGraph(float density, uint vertices, bool directed)

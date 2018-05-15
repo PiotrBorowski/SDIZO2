@@ -188,9 +188,10 @@ std::pair<int*, int*> AdjacencyListGraph::BellmanFord(uint source, uint dest)
 	}
 
 	d[source] = 0;
-
+	bool no_changes;
 	for (int k = 1; k < vertices; ++k)
 	{
+		no_changes = true;
 		for (int u = 0; u < vertices; ++u)
 		{
 			for (auto i : TableOfLists[u])
@@ -199,9 +200,11 @@ std::pair<int*, int*> AdjacencyListGraph::BellmanFord(uint source, uint dest)
 				{
 					d[i.vertex] = d[u] + i.weight;
 					p[i.vertex] = u; //poprzednik
+					no_changes = false;
 				}
 			}
 		}
+		if (no_changes) break;
 	}
 
 	//sprawdzanie czy nie zawiera ujemnego cyklu

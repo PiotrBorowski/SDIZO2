@@ -261,10 +261,10 @@ std::pair<int*, int*> IncidenceMatrixGraph::BellmanFord(uint source, uint dest)
 	}
 
 	d[source] = 0;
-
+	bool no_changes;
 	for (int k = 1; k < vertices; ++k)
 	{
-		
+		no_changes = true;
 		for (int i = 0; i < vertices; ++i) // zrodlowe
 		{
 			for (int j = 0; j < vertices; ++j) //docelowe
@@ -273,12 +273,14 @@ std::pair<int*, int*> IncidenceMatrixGraph::BellmanFord(uint source, uint dest)
 				{
 					if(d[j] > d[i] + GetWeight(i,j))
 					{
+						no_changes = false;
 						d[j] = d[i] + GetWeight(i, j);
 						p[j] = i; //poprzednik
 					}
 				}
 			}
 		}
+		if (no_changes) break;
 	}
 	
 	//sprawdzanie czy nie zawiera ujemnego cyklu

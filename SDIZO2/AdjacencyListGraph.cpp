@@ -149,7 +149,7 @@ std::pair<int*, int*> AdjacencyListGraph::Dijkstra(uint source, uint dest)
 
 	while (!PQ.empty())
 	{
-		int u = PQ.top().second; 
+		int u = PQ.top().second; //docelowy
 		PQ.pop();
 		QS[u] = true;
 
@@ -183,7 +183,7 @@ std::pair<int*, int*> AdjacencyListGraph::BellmanFord(uint source, uint dest)
 
 	for (int i = 0; i < vertices; ++i)
 	{
-		d[i] = 999999;
+		d[i] = 100000;
 		p[i] = -1;
 	}
 

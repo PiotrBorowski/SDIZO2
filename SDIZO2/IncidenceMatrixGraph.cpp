@@ -212,7 +212,7 @@ std::pair<int*, int*> IncidenceMatrixGraph::Dijkstra(uint source, uint dest)
 	for (int i = 0; i < vertices; ++i)
 	{
 		QS[i] = false;
-		d[i] = 999999;
+		d[i] = INT_MAX;
 		p[i] = -1;		
 		if (i != source) PQ.push(std::make_pair(INT_MAX, i));
 	}
@@ -256,7 +256,7 @@ std::pair<int*, int*> IncidenceMatrixGraph::BellmanFord(uint source, uint dest)
 
 	for (int i = 0; i < vertices; ++i)
 	{
-		d[i] = 999999;
+		d[i] = 100000;
 		p[i] = -1;
 	}
 

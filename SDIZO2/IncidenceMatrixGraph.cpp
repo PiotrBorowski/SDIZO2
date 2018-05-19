@@ -62,10 +62,10 @@ IncidenceMatrixGraph::IncidenceMatrixGraph(float density, uint vertices, bool di
 	this->directed = directed;
 
 	if(directed)
-		edges = floor(density * vertices * (vertices - 1));
+		edges = ceil(density * vertices * (vertices - 1));
 	else
 	{
-		edges = floor(density * vertices * (vertices - 1) / 2);
+		edges = ceil(density * vertices * (vertices - 1) / 2);
 		if (edges < vertices - 1) edges = vertices - 1; // dla spojnosci grafu
 	}
 
@@ -414,7 +414,7 @@ void IncidenceMatrixGraph::GenerateRandomGraph()
 	}
 
 	//jezeli sa jakies krawedzie do wykrzystania to tworzy nowe krawedzie 
-	do
+	while (existing_edges < edges)
 	{
 		bool result;
 		do {
@@ -424,7 +424,7 @@ void IncidenceMatrixGraph::GenerateRandomGraph()
 			result = AddEdge(ver1, ver2, weight); // zeby krawedzie sie nie powtarzaly
 		} while (!result);
 
-	}while (existing_edges < edges);
+	}
 }
 //czy wierzcholek posiada polaczenie z innym wierzcholkiem albo jest poczatkiem lub koncem w skierowanym, wykorzystywane do losowania
 bool IncidenceMatrixGraph::IsConnected(uint vertex)

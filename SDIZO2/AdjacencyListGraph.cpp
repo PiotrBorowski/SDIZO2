@@ -55,10 +55,10 @@ AdjacencyListGraph::AdjacencyListGraph(float density, uint vertices, bool direct
 	TableOfLists = new std::list<Edge>[vertices];
 
 	if (directed)
-		edges = floor(density * vertices * (vertices - 1));
+		edges = ceil(density * vertices * (vertices - 1));
 	else 
 	{
-		edges = floor(density * vertices * (vertices - 1) / 2);
+		edges = ceil(density * vertices * (vertices - 1) / 2);
 		if (edges < vertices - 1) edges = vertices - 1;
 	}
 
@@ -214,7 +214,7 @@ std::pair<int*, int*> AdjacencyListGraph::BellmanFord(uint source, uint dest)
 		{
 			if (d[i.vertex] > d[u] + i.weight)
 			{
-				std::make_pair(nullptr, nullptr);
+				return std::make_pair(nullptr, nullptr);
 			}
 		}
 	}
@@ -332,7 +332,7 @@ void AdjacencyListGraph::GenerateRandomGraph()
 	}
 
 	//jezeli sa jakies krawedzie do wykrzystania to tworzy nowe krawedzie 
-	do
+	while (existing_edges < edges)
 	{
 		bool result;
 		do {
@@ -342,7 +342,7 @@ void AdjacencyListGraph::GenerateRandomGraph()
 			result = AddEdge(ver1, ver2, weight); // zeby krawedzie sie nie powtarzaly
 		} while (!result);
 
-	} while (existing_edges < edges);
+	}
 }
 
 //czy wierzcholek posiada polaczenie z innym wierzcholkiem albo jest poczatkiem ub koncem w skierowanym, wykorzystywane do losowania
